@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response, Application } from 'express';
 import mongoose, { Schema } from 'mongoose';
 import * as dotenv from 'dotenv';
 
@@ -23,14 +23,19 @@ const userSchema = new Schema({
 
 const User = mongoose.model('User', userSchema);
 
-const app: express.Application = express();
+class Routes {
+  public applyTo(app: Application): void {
+    app.route('/').get((req: Request, res: Response) => {
+      res.status(200).send({
+        message: 'Hello World!',
+      });
+    });
+  }
+}
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
+const app: Application = express();
 
-app.listen(3000, () => {
-  console.log('[💁]: Hello from Express, running on port 3000!');
-});
+const routes = new Routes();
+routes.applyTo(app);
 
 export default app;
