@@ -26,10 +26,11 @@ const User = mongoose.model('User', userSchema);
 const app: express.Application = express();
 
 app.get('/', (req, res) => {
-  User.find();
   res.send('Hello World!');
 });
 
 app.listen(3000, () => {
   console.log('[💁]: Hello from Express, running on port 3000!');
 });
+
+export default app;
