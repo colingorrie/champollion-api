@@ -1,19 +1,7 @@
 import Card from '@/domain/card';
 import CreateCard from '@/services/createCard';
 import ServiceContext from '@/services/context';
-import { Repository } from '@/repositories/inMemory';
-
-const mockCard = new Card('妳好', 'hello');
-
-class MockRepository implements Repository {
-  public addCard(_card: Card): Card {
-    return mockCard;
-  }
-
-  public getCard(_id: string): Card {
-    return mockCard;
-  }
-}
+import { MockRepository } from 'tests/mocks';
 
 describe('CreateCard', () => {
   let addCard: jest.SpyInstance<(card: Card) => Card>;
