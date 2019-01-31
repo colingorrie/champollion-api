@@ -7,7 +7,9 @@ it('can read a card from the repository', () => {
   const createCard = new CreateCard();
   const retrieveCard = new RetrieveCard();
 
-  const createdCard = createCard.exec('妳好', 'hello');
-  const retrievedCard = retrieveCard.exec(createdCard.id);
-  expect(retrievedCard).toEqual(createdCard);
+  const createdCardId = createCard.exec('你好', 'hello');
+  const retrievedCard = retrieveCard.exec(createdCardId);
+
+  expect(retrievedCard.front).toEqual('你好');
+  expect(retrievedCard.back).toEqual('hello');
 });

@@ -1,9 +1,11 @@
+import uuid from 'uuid/v4';
+
 import Card from '@/domain/card';
 
 class NotFoundError extends Error {}
 
 export interface Repository {
-  addCard(card: Card): Card;
+  addCard(card: Card): string;
   getCard(id: string): Card;
 }
 
@@ -14,8 +16,10 @@ class InMemoryRepository implements Repository {
     this.cards = new Map<string, Card>();
   }
 
-  public addCard(card: Card): Card {
-    return card;
+  public addCard(card: Card): string {
+    const id = uuid();
+    this.cards.set(id, card);
+    return id;
   }
 
   public getCard(id: string): Card {

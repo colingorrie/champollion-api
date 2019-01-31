@@ -4,7 +4,7 @@ import ServiceContext from '@/services/context';
 import { MockRepository } from 'tests/mocks';
 
 describe('CreateCard', () => {
-  let addCard: jest.SpyInstance<(card: Card) => Card>;
+  let addCard: jest.SpyInstance<(card: Card) => string>;
   let createCard: CreateCard;
 
   beforeEach(() => {
@@ -16,7 +16,9 @@ describe('CreateCard', () => {
     ServiceContext.initialize = mockInitialize.bind(ServiceContext);
     ServiceContext.repository = new MockRepository();
 
-    addCard = jest.spyOn(ServiceContext.repository, 'addCard');
+    addCard = jest
+      .spyOn(ServiceContext.repository, 'addCard')
+      .mockReturnValue('cardId');
 
     createCard = new CreateCard();
   });
@@ -31,8 +33,7 @@ describe('CreateCard', () => {
     expect(addCard).toHaveBeenCalledWith(card);
   });
 
-  it('creates a card with front and back', () => {
-    const card = new Card('妳好', 'hello');
-    expect(createCard.exec('妳好', 'hello')).toEqual(card);
+  it("returns the card's id", () => {
+    expect(createCard.exec('妳好', 'hello')).toEqual('cardId');
   });
 });
