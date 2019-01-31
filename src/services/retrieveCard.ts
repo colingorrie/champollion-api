@@ -3,7 +3,7 @@ import ServiceContext from '@/services/context';
 
 export class CardNotFoundError extends Error {}
 
-class ReadCard {
+class RetrieveCard {
   public exec(id: string): Card {
     try {
       return ServiceContext.repository.getCard(id);
@@ -13,4 +13,4 @@ class ReadCard {
   }
 }
 
-export default ReadCard;
+export default RetrieveCard;

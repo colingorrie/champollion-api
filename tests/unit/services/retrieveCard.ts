@@ -1,5 +1,5 @@
 import Card from '@/domain/card';
-import ReadCard, { CardNotFoundError } from '@/services/readCard';
+import RetrieveCard, { CardNotFoundError } from '@/services/retrieveCard';
 import ServiceContext from '@/services/context';
 import { Repository } from '@/repositories/inMemory';
 
@@ -15,19 +15,19 @@ class MockRepository implements Repository {
   }
 }
 
-describe('ReadCard', () => {
+describe('RetrieveCard', () => {
   describe('when called with a non-existent card id', () => {
     it('throws an error if an invalid id is provided', () => {
-      const readCard = new ReadCard();
+      const retrieveCard = new RetrieveCard();
       expect(() => {
-        readCard.exec('nonexistent');
+        retrieveCard.exec('nonexistent');
       }).toThrow(CardNotFoundError);
     });
   });
 
   describe('when called with an existing card id', () => {
     let getCard: jest.SpyInstance<(id: string) => Card>;
-    let readCard: ReadCard;
+    let retrieveCard: RetrieveCard;
 
     beforeEach(() => {
       jest.mock('@/services/context', () => {
@@ -40,7 +40,7 @@ describe('ReadCard', () => {
 
       getCard = jest.spyOn(ServiceContext.repository, 'getCard');
 
-      readCard = new ReadCard();
+      retrieveCard = new RetrieveCard();
     });
 
     afterEach(() => {
@@ -48,12 +48,12 @@ describe('ReadCard', () => {
     });
 
     it('calls ServiceContext.repository.getCard with that id', () => {
-      readCard.exec('realCard');
+      retrieveCard.exec('realCard');
       expect(getCard).toHaveBeenCalledWith('realCard');
     });
 
     it('returns the card with that id', () => {
-      expect(readCard.exec('realCard')).toEqual(mockCard);
+      expect(retrieveCard.exec('realCard')).toEqual(mockCard);
     });
   });
 });

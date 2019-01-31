@@ -1,5 +1,5 @@
 import ServiceContext from './context';
 import CreateCard from './createCard';
-import ReadCard from './readCard';
+import RetrieveCard from './retrieveCard';
 
-export default { ServiceContext, CreateCard, ReadCard };
+export default { ServiceContext, CreateCard, RetrieveCard };
