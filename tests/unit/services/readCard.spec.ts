@@ -16,25 +16,44 @@ class MockRepository implements Repository {
 }
 
 describe('ReadCard', () => {
-  it('throws an error if an invalid id is provided', () => {
-    const readCard = new ReadCard();
-    expect(() => {
-      readCard.exec('nonexistent');
-    }).toThrow(CardNotFoundError);
+  describe('when called with a non-existent card id', () => {
+    it('throws an error if an invalid id is provided', () => {
+      const readCard = new ReadCard();
+      expect(() => {
+        readCard.exec('nonexistent');
+      }).toThrow(CardNotFoundError);
+    });
   });
 
-  it('returns a card that is found', () => {
-    jest.mock('@/services/context', () => {
-      return jest.fn();
+  describe('when called with an existing card id', () => {
+    let getCard: jest.SpyInstance<(id: string) => Card>;
+    let readCard: ReadCard;
+
+    beforeEach(() => {
+      jest.mock('@/services/context', () => {
+        return jest.fn();
+      });
+
+      const mockInitialize = jest.fn();
+      ServiceContext.initialize = mockInitialize.bind(ServiceContext);
+      ServiceContext.repository = new MockRepository();
+
+      getCard = jest.spyOn(ServiceContext.repository, 'getCard');
+
+      readCard = new ReadCard();
     });
 
-    const mockInitialize = jest.fn();
-    mockInitialize.mockReturnValue('worked');
-    ServiceContext.initialize = mockInitialize.bind(ServiceContext);
-    ServiceContext.repository = new MockRepository();
+    afterEach(() => {
+      getCard.mockRestore();
+    });
 
-    const readCard = new ReadCard();
-    expect(readCard.exec('realCard')).toEqual(mockCard);
-    expect(mockInitialize).toHaveBeenCalledTimes(1);
+    it('calls ServiceContext.repository.getCard with that id', () => {
+      readCard.exec('realCard');
+      expect(getCard).toHaveBeenCalledWith('realCard');
+    });
+
+    it('returns the card with that id', () => {
+      expect(readCard.exec('realCard')).toEqual(mockCard);
+    });
   });
 });

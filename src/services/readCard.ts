@@ -5,7 +5,6 @@ export class CardNotFoundError extends Error {}
 
 class ReadCard {
   public exec(id: string): Card {
-    ServiceContext.initialize();
     try {
       return ServiceContext.repository.getCard(id);
     } catch (err) {
