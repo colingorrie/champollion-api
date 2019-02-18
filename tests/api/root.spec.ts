@@ -1,17 +1,22 @@
 import { Server } from 'http';
 import { AddressInfo } from 'net';
 
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 
 import app from '@/app';
 
 describe('/', () => {
   let server: Server;
-  let serverAddress: AddressInfo;
+  let API: AxiosInstance;
 
-  beforeAll(() => {
-    server = app.listen(0);
-    serverAddress = server.address() as AddressInfo;
+  beforeAll(async () => {
+    server = await app.listen(0);
+
+    const serverAddress = server.address() as AddressInfo;
+    API = axios.create({
+      baseURL: `http://localhost:${serverAddress.port}`,
+      validateStatus: status => status >= 200 && status <= 503,
+    });
   });
 
   afterAll(async () => {
@@ -19,7 +24,7 @@ describe('/', () => {
   });
 
   it('returns "Hello World!"', async () => {
-    const response = await axios.get(`http://localhost:${serverAddress.port}/`);
+    const response = await API.get(`/`);
     expect(response.data).toEqual({ message: 'Hello World!' });
   });
 });

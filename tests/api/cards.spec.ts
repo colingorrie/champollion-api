@@ -1,24 +1,25 @@
 import { Server } from 'http';
 import { AddressInfo } from 'net';
 
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 
 import app from '@/app';
 
 import ServiceContext from '@/services/context';
 import CreateCard from '@/services/createCard';
 
-const api = axios.create({
-  validateStatus: status => status >= 200 && status <= 503,
-});
-
 describe('/cards/:cardId', () => {
   let server: Server;
-  let serverAddress: AddressInfo;
+  let API: AxiosInstance;
 
   beforeAll(async () => {
     server = await app.listen(0);
-    serverAddress = server.address() as AddressInfo;
+
+    const serverAddress = server.address() as AddressInfo;
+    API = axios.create({
+      baseURL: `http://localhost:${serverAddress.port}`,
+      validateStatus: status => status >= 200 && status <= 503,
+    });
   });
 
   afterAll(async () => {
@@ -30,7 +31,7 @@ describe('/cards/:cardId', () => {
     let cardFront = '你好';
     let cardBack = 'hello';
 
-    beforeEach(() => {
+    beforeAll(() => {
       ServiceContext.initialize();
       const createCard = new CreateCard();
       cardId = createCard.exec(cardFront, cardBack);
@@ -38,9 +39,7 @@ describe('/cards/:cardId', () => {
 
     describe('when called with cardId', () => {
       it('responds with the card', async () => {
-        const response = await axios.get(
-          `http://localhost:${serverAddress.port}/cards/${cardId}`
-        );
+        const response = await API.get(`/cards/${cardId}`);
         expect(response.status).toEqual(200);
         expect(response.data).toEqual({ front: cardFront, back: cardBack });
       });
@@ -50,9 +49,7 @@ describe('/cards/:cardId', () => {
   describe('given cardId does not point to an existing card', () => {
     describe('when called with cardId', () => {
       it('responds with 404 for nonexistent card', async () => {
-        const response = await api.get(
-          `http://localhost:${serverAddress.port}/cards/something`
-        );
+        const response = await API.get(`/cards/nonexistent`);
         expect(response.status).toEqual(404);
       });
     });
