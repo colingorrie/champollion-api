@@ -9,6 +9,12 @@ class Routes {
         message: 'Hello World!',
       });
     });
+
+    server.app.route('/cards/:cardId').get(
+      (req: Request, res: Response): void => {
+        res.status(200).send();
+      }
+    );
   }
 }
 

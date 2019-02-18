@@ -5,12 +5,12 @@ import axios from 'axios';
 
 import app from '@/app';
 
-describe('/', () => {
+describe('/cards/:id', () => {
   let server: Server;
   let serverAddress: AddressInfo;
 
-  beforeAll(() => {
-    server = app.listen(0);
+  beforeAll(async () => {
+    server = await app.listen(0);
     serverAddress = server.address() as AddressInfo;
   });
 
@@ -18,8 +18,10 @@ describe('/', () => {
     await server.close();
   });
 
-  it('returns "Hello World!"', async () => {
-    const response = await axios.get(`http://localhost:${serverAddress.port}/`);
-    expect(response.data).toEqual({ message: 'Hello World!' });
+  it('responds to GET requests', async () => {
+    const response = await axios.get(
+      `http://localhost:${serverAddress.port}/cards/something`
+    );
+    expect(response.status).toEqual(200);
   });
 });
